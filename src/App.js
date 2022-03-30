@@ -1,8 +1,22 @@
+import React, { useState } from "react";
+import AppRouter from "./components/AppRouter";
+import firebase from "./firebase";
 import "./App.css";
-// npm i react-router-dom@5.3.0
 
 function App() {
-  return <div className="App"></div>;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const onClick = () => setIsLoggedIn(!isLoggedIn);
+
+  return (
+    <>
+      <AppRouter isLoggedIn={isLoggedIn} />
+      <div>
+        <button onClick={onClick} style={{ fontSize: "50px" }}>
+          ON/OFF
+        </button>
+      </div>
+    </>
+  );
 }
 
 export default App;
