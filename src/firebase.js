@@ -1,8 +1,8 @@
 // Import the functions you need from the SDKs you need
-// import { initializeApp } from "firebase/app";
-import "firebase/auth";
+import { initializeApp } from "firebase/app";
 // 첫번째 임포트 import * as firebase from "firebase/app";
-import firebase from "firebase/compat/app";
+// 노마드코더 ㅡ import "firebase/auth";
+// 노마드코더 ㅡ import firebase from "firebase/compat/app";
 // import "firebase/compat/auth";
 // import "firebase/compat/firestore";
 // import "firebase/compat/storage";
@@ -21,5 +21,6 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-export default firebase.initializeApp(firebaseConfig);
+const firebase = initializeApp(firebaseConfig);
+// 노마드코더 ㅡ export default firebase.initializeApp(firebaseConfig);
+export default firebase;

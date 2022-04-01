@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -8,7 +8,8 @@ import {
 function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [newAccount, setNewAccount] = useState(false);
+  const [newAccount, setNewAccount] = useState(true);
+  const auth = getAuth();
 
   const onChange = (event) => {
     const inputName = event.target.name;
@@ -21,42 +22,50 @@ function Auth() {
     }
   };
 
-  const onSubmit = (event) => {
+  // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+  // 계정 생성 함수
+  const onSubmit = async (event) => {
     event.preventDefault();
-    if (newAccount) {
-      // 계정 생성
-      // 공식문서ver
-      createUserWithEmailAndPassword(email, password).catch(function (error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        if (errorCode == "auth/weak-password") {
-          alert("The password is too weak.");
-        } else {
-          alert(errorMessage);
-        }
-        console.log(error);
-      });
+    // 노마드코더ver
+    try {
+      let data;
+      if (newAccount) {
+        data = await createUserWithEmailAndPassword(auth, email, password);
+      } else {
+        data = await signInWithEmailAndPassword(auth, email, password);
+      }
+      console.log(data);
+    } catch (error) {
+      console.log(error);
     }
-    console.log(createUserWithEmailAndPassword);
+    // 유튜브ver
+    // const result = await createUserWithEmailAndPassword(auth, email, password);
+    // console.log(result);
+    // if (newAccount) {
+    //   const result = await createUserWithEmailAndPassword(
+    //     auth,
+    //     email,
+    //     password
+    //   );
+    //   console.log(result);
+    // } else {
+    //   const result = await signInWithEmailAndPassword(auth, email, password);
+    //   console.log(result);
+    // }
   };
-  // const onSubmit2 = async (event) => {
-  //   event.preventDefault();
-  //   try {
-  //     let data;
-  //     if (newAccount) {
-  //       data = await createUserWithEmailAndPassword(email, password);
-  //     } else {
-  //       const auth = getAuth();
-  //       data = await signInWithEmailAndPassword(auth, email, password);
-  //     }
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
-  useEffect(() => console.log(getAuth()), []);
+  const toggleAccount = () => setNewAccount((prev) => !prev);
+  const onSocialClick = (event) => {
+    console.log(event.target.name);
+    const {
+      target: { name },
+    } = event;
+    if (name === "google") {
+      // if
+    } else if (name === "github") {
+      // else if
+    }
+  };
 
   return (
     <>
@@ -83,7 +92,13 @@ function Auth() {
           value={newAccount ? "계정 생성" : "로그인"}
         ></input>
       </form>
-      <button>Continue with Google</button>
+      <span onClick={toggleAccount}>{newAccount ? "로그인" : "계정 생성"}</span>
+      <button name="google" onClick={onSocialClick}>
+        Continue with Google
+      </button>
+      <button name="github" onClick={onSocialClick}>
+        Continue with github
+      </button>
     </>
   );
 }
