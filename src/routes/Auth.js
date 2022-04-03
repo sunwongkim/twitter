@@ -3,13 +3,16 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  // GithubAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
 function Auth() {
+  const auth = getAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newAccount, setNewAccount] = useState(true);
-  const auth = getAuth();
 
   const onChange = (event) => {
     const inputName = event.target.name;
@@ -55,17 +58,34 @@ function Auth() {
   };
 
   const toggleAccount = () => setNewAccount((prev) => !prev);
-  const onSocialClick = (event) => {
+
+  const onSocialClick = async (event) => {
     console.log(event.target.name);
     const {
       target: { name },
     } = event;
+    let provider;
     if (name === "google") {
-      // if
+      provider = new GoogleAuthProvider();
     } else if (name === "github") {
-      // else if
+      // provider = new GithubAuthProvider();
     }
+    const data = await signInWithPopup(auth, provider);
   };
+  //유튜브ver
+  // const handle = () => {
+  //   const provider = new GoogleAuthProvider();
+  //   const auth = getAuth();
+  //   signInWithPopup(auth, provider).then((result) => {
+  //     const user = result.userclg;
+  //     console.log(user);
+  //   });
+  // };
+  //단축ver
+  // const handle = () => {
+  //   const provider = new GoogleAuthProvider();
+  //   signInWithPopup(auth, provider);
+  // };
 
   return (
     <>
@@ -96,9 +116,9 @@ function Auth() {
       <button name="google" onClick={onSocialClick}>
         Continue with Google
       </button>
-      <button name="github" onClick={onSocialClick}>
+      {/* <button name="github" onClick={onSocialClick}>
         Continue with github
-      </button>
+      </button> */}
     </>
   );
 }

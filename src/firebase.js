@@ -22,5 +22,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebase = initializeApp(firebaseConfig);
-// 노마드코더 ㅡ export default firebase.initializeApp(firebaseConfig);
 export default firebase;
+// 노마드코더
+// export default firebase.initializeApp(firebaseConfig);
+// export const authService = firebase.auth()
+// export const dbService = firebase.firestore()
