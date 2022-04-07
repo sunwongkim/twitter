@@ -6,17 +6,16 @@ import "./App.css";
 
 // 노마드코더 변수 authService = getAuth()
 function App() {
-  const onClick = () => setIsLoggedIn(!isLoggedIn); //토글
-
   const [init, setInit] = useState(false); //초기값 설정
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  console.log(isLoggedIn);
+  const [userObj, setUserObj] = useState(null);
 
   // 로그인 상태 감지
   useEffect(() => {
     getAuth().onAuthStateChanged((user) => {
       if (user) {
         setIsLoggedIn(true);
+        setUserObj(user);
       } else {
         setIsLoggedIn(false);
       }
@@ -25,6 +24,9 @@ function App() {
     });
   }, []);
 
+  const onClick = () => setIsLoggedIn(!isLoggedIn); //토글
+  console.log(isLoggedIn);
+
   return (
     <>
       <div>
@@ -32,7 +34,7 @@ function App() {
           CHANGE
         </button>
       </div>
-      {init ? <Router isLoggedIn={isLoggedIn} /> : "초기화.."}
+      {init ? <Router isLoggedIn={isLoggedIn} userObj={userObj} /> : "초기화.."}
     </>
   );
 }
