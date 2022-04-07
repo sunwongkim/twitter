@@ -7,6 +7,7 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
+import Tweet from "../components/Tweet";
 // getDocs
 // https://firebase.google.com/docs/firestore/quickstart
 // https://firebase.google.com/docs/firestore/query-data/get-data
@@ -34,7 +35,7 @@ function Home({ userObj }) {
 
   // READ (REALTIME)
   useEffect(() => {
-    const q = query(collection(db, "tweet"), orderBy("createdAt"));
+    const q = query(collection(db, "tweet"), orderBy("createdAt", "desc"));
     onSnapshot(q, (querySnapshot) => {
       const tweetArray = querySnapshot.docs.map((doc) => ({
         ...doc.data(),
@@ -85,9 +86,13 @@ function Home({ userObj }) {
       </form>
 
       {/* 목록 */}
-      <div key={tweet.id}>
-        {tweets.map((tweets) => (
-          <h4 key={tweets.id}>{tweets.text}</h4>
+      <div>
+        {tweets.map((tweet) => (
+          <Tweet
+            key={tweet.id}
+            tweetObj={tweet}
+            isOwner={tweet.creatorId === userObj.uid}
+          />
         ))}
       </div>
     </>
