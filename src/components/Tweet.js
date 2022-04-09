@@ -32,7 +32,7 @@ function Tweet({ tweetObj, isOwner }) {
   const onChange = (event) => {
     setNewTweet(event.target.value);
   };
-  // 삭제<->취소
+  // 수정<->취소
   const toggleEditing = () => setEditing((prev) => !prev);
 
   return (
@@ -54,6 +54,7 @@ function Tweet({ tweetObj, isOwner }) {
       ) : (
         <>
           <h4>{tweetObj.text}</h4>
+          {/* 작성자일때만 버튼을 보여줌 */}
           {isOwner && (
             <>
               <button onClick={onDeleteClick}>삭제</button>

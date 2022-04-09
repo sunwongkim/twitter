@@ -3,8 +3,10 @@ import firebase from "./firebase";
 import { getAuth } from "firebase/auth";
 import Router from "./components/Router";
 import "./App.css";
-
-// 노마드코더 변수 authService = getAuth()
+// 노마드코더 변수
+// authService = getAuth()
+// dbService = firebase.firestore()
+// storaheService = firebase.storage()
 function App() {
   const [init, setInit] = useState(false); //초기값 설정
   const [isLoggedIn, setIsLoggedIn] = useState(false);
