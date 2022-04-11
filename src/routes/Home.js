@@ -7,10 +7,18 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
-import firebase from "../firebase";
+import "firebase/storage";
+import {
+  getStorage,
+  ref,
+  uploadString,
+  toString,
+  getDownloadURL,
+} from "firebase/storage";
 import Tweet from "../components/Tweet";
-import { upload } from "@testing-library/user-event/dist/upload";
-import { storage, getStorage, ref } from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
+// 유튜브 링크 ㅡ https://www.youtube.com/watch?v=YOAeBSCkArA
+// 두번쨰 https://acervolima.com/como-fazer-upload-de-arquivos-no-armazenamento-firebase-usando-reactjs/
 
 // getDocs
 // https://firebase.google.com/docs/firestore/quickstart
@@ -21,22 +29,46 @@ import { storage, getStorage, ref } from "firebase/storage";
 
 function Home({ userObj }) {
   const db = getFirestore();
+  const storage = getStorage();
   const [tweet, setTweet] = useState("");
   const [tweets, setTweets] = useState([]);
   const [attachment, setAttachment] = useState([]);
-  //
-  const [image, setImage] = useState("");
 
   // CREAT
+
   const onSubmit = async (event) => {
     event.preventDefault();
+    // 이미지 부분
+    const attachmentRef = ref(storage, `${userObj.uid}/${uuidv4()}`);
+    const response = await uploadString(attachmentRef, attachment, "data_url");
+    const attachmentUrl = await getDownloadURL(
+      attachmentRef,
+      attachment,
+      "data_url"
+    );
+    console.log(attachmentUrl);
+    console.log(response);
+    setAttachment("");
+
+    // 댓글
+    // const fileRef = ref(storageService, `${userObj.uid}/${v4()}`);
+    // const response = await uploadString(fileRef, attachment, "data_url");
+    // console.log(response);
+    // 노마드코더
+    // storageService = const storage = getStorage()
+    // const attachmentRef =storaheService.ref().child(`${userObj.uid}/${uuidv4()}`)
+    // const response = await attachmentRef.putString(attachment, "data_url")
+    // const attachmentUrl = await Response.ref.getDownloadURL()
+    // console.log(response)
+    // 텍스트 부분
     const docRef = await addDoc(collection(db, "tweet"), {
       text: tweet,
       createdAt: Date.now(),
       creatorId: userObj.uid,
+      attachmentUrl,
     });
-    console.log("Document writtfen with ID: ", docRef.id);
     setTweet("");
+    // console.log(response);
   };
 
   // READ (일반)
@@ -71,41 +103,37 @@ function Home({ userObj }) {
   //   });
   // },[])
 
-  console.log(tweets);
+  // STORAGE
+  const onFileChange = (event) => {
+    const theFile = event.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = (finishedEvent) => {
+      setAttachment(finishedEvent.currentTarget.result);
+      console.log(finishedEvent.currentTarget);
+    };
+    reader.readAsDataURL(theFile);
+  };
 
+  console.log(tweets);
+  const onClearAttachment = () => setAttachment(null);
   const onChange = (event) => {
     setTweet(event.target.value);
   };
 
-  //
-  // STORAGE
-  const onFileChange = (event) => {
-    // storaheService = firebase.storage()
-    // storaheService.ref().child(`${userObj.uid}/`)
-    const theFile = event.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = (finishedEvent) => {
-      console.log(finishedEvent.currentTarget.result);
-      setAttachment(finishedEvent.currentTarget.result);
-      reader.readAsDataURL(theFile);
-    };
-  };
-  const onClearAttachment = () => setAttachment(null);
-
-  //
-
-  const upload = () => {
-    if (image == null) return;
-    firebase
-      .storage()
-      .ref(`/images/${image.name}`)
-      .put(image)
-      .on("state_changed", alert("success"), alert);
-  };
+  // const [image, setImage] = useState("");
+  // const upload = () => {
+  //   if (image == null) return;
+  // storage
+  //   .ref(`/images/${image.name}`)
+  //   .put(image)
+  //   .on("state_changed", alert("success"), alert);
+  // };
+  // const attachmentRef = ref(storage, `${userObj.uid}/${uuidv4()}`);
 
   return (
     <>
       <form onSubmit={onSubmit}>
+        {/* 트윗 */}
         <input
           type="text"
           onChange={onChange}
@@ -114,24 +142,16 @@ function Home({ userObj }) {
           maxLength={120}
         />
         <input type="submit" value="tweet" />
+        {/* 사진 업로드 */}
         <input type="file" onChange={onFileChange} accept="image/*" />
         {/*  */}
-        <input
-          type="file"
-          onChange={(e) => {
-            setImage(e.target.files[0]);
-          }}
-        />
-        <button onClick={upload}>Upload</button>
-        {/*  */}
-        {attachment && (
-          <>
-            <img src={attachment} style={{ width: "50px" }} />
-            <button onClick={onClearAttachment}>Clear</button>
-          </>
-        )}
+        {/* {attachment && ( */}
+        <>
+          <img src={attachment} style={{ width: "50px" }} />
+          <button onClick={onClearAttachment}>Clear</button>
+        </>
+        {/* )} */}
       </form>
-
       {/* 목록 */}
       {tweets.map((tweet) => (
         <Tweet
@@ -140,6 +160,15 @@ function Home({ userObj }) {
           isOwner={tweet.creatorId === userObj.uid}
         />
       ))}
+      {/* <center>
+        <input
+          type="file"
+          onChange={(e) => {
+            setImage(e.target.files[0]);
+          }}
+        />
+        <button onClick={upload}>Upload</button>
+      </center> */}
     </>
   );
 }
