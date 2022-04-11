@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { getFirestore, deleteDoc, updateDoc, doc } from "firebase/firestore";
+import { getStorage, ref, deleteObject } from "firebase/storage";
 
 function Tweet({ tweetObj, isOwner }) {
   const db = getFirestore();
+  const storage = getStorage();
   const [editing, setEditing] = useState(false);
   const [newTweet, setNewTweet] = useState(tweetObj.text);
 
@@ -24,8 +26,10 @@ function Tweet({ tweetObj, isOwner }) {
     const ok = window.confirm("sure delete?");
     console.log(ok);
     if (ok) {
-      await deleteDoc(doc(db, "tweet", tweetObj.id));
+      await deleteDoc(doc(db, "tweet", tweetObj.id)); // FIRESTORE
       // 노마드코더 - await dbService.doc(`tweets/${tweetObj.id}`).delete();
+      await deleteObject(ref(storage, tweetObj.attachmentUrl)); // STORAGE
+      // 노마드코더 - await storageService.refFromURL(nweetObj.attachmentUrl).delete();
     }
   };
 
