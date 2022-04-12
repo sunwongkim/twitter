@@ -26,9 +26,9 @@ function Tweet({ tweetObj, isOwner }) {
     const ok = window.confirm("sure delete?");
     console.log(ok);
     if (ok) {
-      await deleteDoc(doc(db, "tweet", tweetObj.id)); // FIRESTORE
+      await deleteDoc(doc(db, "tweet", tweetObj.id)); // FIRESTORE - 트윗
       // 노마드코더 - await dbService.doc(`tweets/${tweetObj.id}`).delete();
-      await deleteObject(ref(storage, tweetObj.attachmentUrl)); // STORAGE
+      await deleteObject(ref(storage, tweetObj.attachmentUrl)); // STORAGE - 이미지
       // 노마드코더 - await storageService.refFromURL(nweetObj.attachmentUrl).delete();
     }
   };
@@ -57,9 +57,15 @@ function Tweet({ tweetObj, isOwner }) {
         </>
       ) : (
         <>
+          {/* 트윗, 이미지 반복 */}
           <h4>{tweetObj.text}</h4>
           {tweetObj.attachmentUrl && (
-            <img src={tweetObj.attachmentUrl} width="50px" height="50px" />
+            <img
+              src={tweetObj.attachmentUrl}
+              width="50px"
+              height="50px"
+              alt={tweetObj.attachmentUrl}
+            />
           )}
           {/* 작성자일때만 버튼을 보여줌 */}
           {isOwner && (

@@ -15,7 +15,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import Tweet from "../components/Tweet";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid"; //랜덤 값
 // getDocs
 // https://firebase.google.com/docs/firestore/quickstart
 // https://firebase.google.com/docs/firestore/query-data/get-data
@@ -27,7 +27,7 @@ function Home({ userObj }) {
   const storage = getStorage();
   const [tweet, setTweet] = useState("");
   const [tweets, setTweets] = useState([]);
-  const [attachment, setAttachment] = useState([]);
+  const [attachment, setAttachment] = useState(""); //이미지
 
   // CREAT
   // 경로 참조 생성 - 업로드 - URL로 다운로드
@@ -64,19 +64,20 @@ function Home({ userObj }) {
 
   // READ (일반)
   // useEffect(async () => {
-  //   const querySnapshot = await getDocs(collection(db, "tweet"));
-  //   querySnapshot.forEach((doc) => {
-  //     const newObj = {
-  //       ...doc.data(),
-  //       id: doc.id,
-  //     };
-  //     setTweets((prev) => [newObj, ...prev]);
-  //     console.log(doc.data());
+  // const querySnapshot = await getDocs(collection(db, "tweet"));
+  // querySnapshot.forEach((doc) => {
+  //   const newObj = {
+  //     ...doc.data(),
+  //     id: doc.id,
+  //   };
+  //   setTweets((prev) => [newObj, ...prev]);
+  //   console.log(doc.data());
   //   });
   // }, []);
 
   // READ (REALTIME)
   useEffect(() => {
+    const db = getFirestore();
     const q = query(collection(db, "tweet"), orderBy("createdAt", "desc"));
     onSnapshot(q, (querySnapshot) => {
       const tweetArray = querySnapshot.docs.map((doc) => ({
@@ -93,9 +94,9 @@ function Home({ userObj }) {
   // STORAGE
   const onFileChange = (event) => {
     const theFile = event.target.files[0];
-    const reader = new FileReader();
+    const reader = new FileReader(); // FileReader API
     reader.onloadend = (finishedEvent) => {
-      setAttachment(finishedEvent.currentTarget.result);
+      setAttachment(finishedEvent.currentTarget.result); // URL
       console.log(finishedEvent.currentTarget);
     };
     reader.readAsDataURL(theFile);
@@ -123,7 +124,7 @@ function Home({ userObj }) {
         <input type="file" onChange={onFileChange} accept="image/*" />
         {attachment && (
           <>
-            <img src={attachment} style={{ width: "50px" }} />
+            <img src={attachment} style={{ width: "50px" }} alt="preview" />
             <button onClick={onClearAttachment}>Clear</button>
           </>
         )}
