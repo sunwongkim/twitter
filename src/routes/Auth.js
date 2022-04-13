@@ -14,7 +14,7 @@ function Auth() {
   const [password, setPassword] = useState("");
   const [newAccount, setNewAccount] = useState(true);
 
-  const onChange = (event) => {
+  const onCheakLogIn = (event) => {
     const inputName = event.target.name;
     const inputValue = event.target.value;
     // email or password 입력창 판별용 조건문
@@ -57,8 +57,6 @@ function Auth() {
     // }
   };
 
-  const toggleAccount = () => setNewAccount((prev) => !prev);
-
   const onSocialClick = async (event) => {
     console.log(event.target.name);
     const {
@@ -70,7 +68,7 @@ function Auth() {
     } else if (name === "github") {
       // provider = new GithubAuthProvider();
     }
-    const data = await signInWithPopup(auth, provider);
+    await signInWithPopup(auth, provider);
   };
   //유튜브ver
   // const handle = () => {
@@ -96,7 +94,7 @@ function Auth() {
           type="text"
           placeholder="Email"
           value={email}
-          onChange={onChange}
+          onChange={onCheakLogIn}
           required
         ></input>
         <input
@@ -104,7 +102,7 @@ function Auth() {
           type="password"
           placeholder="Password"
           value={password}
-          onChange={onChange}
+          onChange={onCheakLogIn}
           required
         ></input>
         <input
@@ -112,12 +110,14 @@ function Auth() {
           value={newAccount ? "계정 생성" : "로그인"}
         ></input>
       </form>
-      <span onClick={toggleAccount}>{newAccount ? "로그인" : "계정 생성"}</span>
+      <span onClick={setNewAccount((prev) => !prev)}>
+        {newAccount ? "로그인" : "계정 생성"}
+      </span>
       <button name="google" onClick={onSocialClick}>
-        Continue with Google
+        Google LogIn
       </button>
       {/* <button name="github" onClick={onSocialClick}>
-        Continue with github
+        github LogIn
       </button> */}
     </>
   );

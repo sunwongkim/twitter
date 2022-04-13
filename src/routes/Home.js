@@ -2,20 +2,14 @@ import React, { useState, useEffect } from "react";
 import {
   getFirestore,
   collection,
-  addDoc,
   onSnapshot,
   query,
   orderBy,
+  // addDoc,
 } from "firebase/firestore";
 import "firebase/storage";
-import {
-  getStorage,
-  ref,
-  uploadString,
-  getDownloadURL,
-} from "firebase/storage";
 import Tweet from "../components/Tweet";
-import { v4 as uuidv4 } from "uuid"; //랜덤 값
+import TweetFactory from "../components/TweetFactory";
 // getDocs
 // https://firebase.google.com/docs/firestore/quickstart
 // https://firebase.google.com/docs/firestore/query-data/get-data
@@ -23,44 +17,8 @@ import { v4 as uuidv4 } from "uuid"; //랜덤 값
 // https://firebase.google.com/docs/firestore/query-data/listen
 
 function Home({ userObj }) {
-  const db = getFirestore();
-  const storage = getStorage();
-  const [tweet, setTweet] = useState("");
+  // const db = getFirestore();
   const [tweets, setTweets] = useState([]);
-  const [attachment, setAttachment] = useState(""); //이미지
-
-  // CREAT
-  // 경로 참조 생성 - 업로드 - URL로 다운로드
-  const onSubmit = async (event) => {
-    event.preventDefault();
-    // 이미지 부분
-    let attachmentUrl = "";
-    if (attachment !== "") {
-      const attachmentRef = ref(storage, `${userObj.uid}/${uuidv4()}`);
-      const response = await uploadString(
-        attachmentRef,
-        attachment,
-        "data_url"
-      );
-      attachmentUrl = await getDownloadURL(response.ref);
-    }
-    console.log(attachmentUrl);
-    setAttachment("");
-    // 노마드코더
-    // storageService = const storage = getStorage()
-    // const attachmentRef =storaheService.ref().child(`${userObj.uid}/${uuidv4()}`)
-    // const response = await attachmentRef.putString(attachment, "data_url")
-    // const attachmentUrl = await Response.ref.getDownloadURL()
-    // 텍스트 부분
-    const tweetInfo = {
-      text: tweet,
-      createdAt: Date.now(),
-      creatorId: userObj.uid,
-      attachmentUrl,
-    };
-    await addDoc(collection(db, "tweet"), tweetInfo);
-    setTweet("");
-  };
 
   // READ (일반)
   // useEffect(async () => {
@@ -91,45 +49,12 @@ function Home({ userObj }) {
     });
   }, []);
 
-  // STORAGE
-  const onFileChange = (event) => {
-    const theFile = event.target.files[0];
-    const reader = new FileReader(); // FileReader API
-    reader.onloadend = (finishedEvent) => {
-      setAttachment(finishedEvent.currentTarget.result); // URL
-      console.log(finishedEvent.currentTarget);
-    };
-    reader.readAsDataURL(theFile);
-  };
-
   console.log(tweets);
-  const onClearAttachment = () => setAttachment(null);
-  const onChange = (event) => {
-    setTweet(event.target.value);
-  };
 
   return (
     <>
-      <form onSubmit={onSubmit}>
-        {/* 트윗 */}
-        <input
-          type="text"
-          onChange={onChange}
-          value={tweet}
-          placeholder="what's on your mind?"
-          maxLength={120}
-        />
-        <input type="submit" value="tweet" />
-        {/* 사진 업로드 */}
-        <input type="file" onChange={onFileChange} accept="image/*" />
-        {attachment && (
-          <>
-            <img src={attachment} style={{ width: "50px" }} alt="preview" />
-            <button onClick={onClearAttachment}>Clear</button>
-          </>
-        )}
-      </form>
       {/* 목록 */}
+      <TweetFactory userObj={userObj} />
       {tweets.map((tweet) => (
         <Tweet
           key={tweet.id}
