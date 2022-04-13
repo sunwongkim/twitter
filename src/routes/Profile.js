@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import {
   getFirestore,
@@ -15,6 +15,7 @@ import firebase from "../firebase";
 
 function Profile({ userObj }) {
   const db = getFirestore();
+  const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
 
   // 로그아웃
   // const history = useHistory;
@@ -52,8 +53,31 @@ function Profile({ userObj }) {
     getMyTweets();
   }, []);
 
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    if (userObj.displayName !== newDisplayName) {
+      await userObj.updateProfile({
+        displayName: newDisplayName,
+      });
+    }
+  };
+
+  const onChange = (event) => {
+    setNewDisplayName(event.target.value);
+  };
+  console.log(newDisplayName);
+
   return (
     <>
+      <form onSubmit={onSubmit}>
+        <input
+          type="text"
+          onChange={onChange}
+          value={newDisplayName}
+          placeholder="Display name"
+        />
+        <input type="submit" value="Update Profile" />
+      </form>
       <button onClick={onLogOutClick}>Log Out</button>;
     </>
   );
