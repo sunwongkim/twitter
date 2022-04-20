@@ -110,7 +110,7 @@ function Auth() {
           value={newAccount ? "계정 생성" : "로그인"}
         ></input>
       </form>
-      <span onClick={setNewAccount((prev) => !prev)}>
+      <span onClick={() => setNewAccount((prev) => !prev)}>
         {newAccount ? "로그인" : "계정 생성"}
       </span>
       <button name="google" onClick={onSocialClick}>
